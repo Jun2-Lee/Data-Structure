@@ -37,11 +37,23 @@ def Big_box(box):                                   # 큰 박스 1개를 만드�
 
 least_price = Big_box(box)                          # 처음 입력한 박스를 돌리지 않고 만들 수 있는 가장 적은 비용의 큰 박스
 
-for i in range(3):                                  # 박스를 하나만 회전시킨 경우(2개를 회전시키는 것과 1개만 회전시키는 것은 동일하다.)
+for i in range(3):                                   # 박스를 돌리는 모든 경우를 해 주었다.
     box[i].reverse()
-    price = Big_box(box)
-    if least_price > price:
-        least_price = price
+    for j in range(i+1,3):
+        box[j].reverse()
+        if i == 0 and j == 1:
+            box[2].reverse()
+            price_all = Big_box(box)
+            if least_price > price_all:
+                least_price = price_all
+            box[2].reverse()
+        price_two = Big_box(box)
+        if least_price > price_two:
+            least_price = price_two
+        box[j].reverse()
+    price_one = Big_box(box)
+    if least_price > price_one:
+        least_price = price_one
     box[i].reverse()
 
 print(least_price)
