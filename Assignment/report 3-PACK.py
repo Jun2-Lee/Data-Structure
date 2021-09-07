@@ -1,58 +1,24 @@
-box = [list(map(int,input().split())) for _ in range(3)]
+def Big_box(box):
+    price = 200000
+    for i in range(6):
+        for j in range(6):
+            for k in range(6):
+                if(i%3 == j%3 or j%3 == k%3 or k%3 == i%3):     # 중복된 박스일 때 실행하지 않는다
+                    continue
 
-def Big_box(box):                                   # 큰 박스 1개를 만드는 함수
-    max_w = 0
-    max_h = 0
-    h = 0
-    for i in range(3):                              # 박스를 2개, 1개로 나누어서 붙이는 경우
-        if max_h < box[i][1]:                       # 다른 박스와 세로로 붙이지 않을 박스로 세로 길이가 가장 긴 박스를 설정
-            max_h = box[i][1]                       
-            temp_w,temp_h = box[i][0],box[i][1]     # 그 박스의 가로와 세로를 임시로 저장해준다
-            temp = i
+                row   = max(box[i][0] + box[j][0],   box[k][0]) # 2개, 1개로 나누었을 때 
+                col   = max(box[i][1] , box[j][1]) + box[k][1]
+                price = min(price, row*row + col*col)       
 
-    box[temp][0] = 0
-    box[temp][1] = 0
-    for j in range(3):                              # 가장 긴 박스보다 나머지 2개 박스의 세로 길이가 더 긴 경우, 큰 박스의 세로 길이를 재설정 해준다.
-        h += box[j][1]
-    if max_h < h:
-        max_h = h
-    max_w = max(box)[0]                             # 세로로 붙인 박스의 가로 길이중에 큰 것과, 세로로 붙이지 않을 박스의 가로 길이를 더해서 큰 박스의 가로 길이를 정해준다.
-    max_w += temp_w
-    price_1 = max_w*max_w + max_h*max_h
-    box[temp][0],box[temp][1] = temp_w,temp_h
+                row   = box[i][0] + box[j][0] + box[k][0]       # 3개를 연달아 붙였을 때
+                col   = max(box[i][1], box[j][1], box[k][1])
+                price = min(price, row*row + col*col)
+    return price
 
-    max_w = max(box)[0]                             # 박스를 3개 모두 한 방향으로 붙이는 경우(세로)
-    max_h = box[0][1] + box[1][1] + box[2][1]       # 세로 길이는 3개의 박스를 세로로 붙인 총 길이이고, 가로 길이는 3개의 박스중에 가장 가로로 긴 것이다.
-    price_2 = max_w*max_w + max_h*max_h
+box = [[0]*2 for _ in range(6)]
+for i in range(3):
+    width, height = map(int,input().split())
+    box[i][0]  ,box[i][1]   = width , height                    # 박스를 회전시키는 경우 추가
+    box[i+3][0],box[i+3][1] = height, width
 
-
-    least_price = min(price_1,price_2)              # 만든 3개의 큰 박스 중에 비용이 가장 작은 것을 선택한다(가로^2+세로^2의 값이 작은 것)
-    return least_price
-
-least_price = Big_box(box)                          # 처음 입력한 박스를 돌리지 않고 만들 수 있는 가장 적은 비용의 큰 박스
-
-for i in range(3):                                  # 박스를 돌리는 모든 경우를 해 주었다.
-    box[i].reverse()
-    for j in range(i+1,3):
-        box[j].reverse()
-        if i == 0 and j == 1:
-            box[2].reverse()
-            price_all = Big_box(box)
-            if least_price > price_all:
-                least_price = price_all
-            box[2].reverse()
-        price_two = Big_box(box)
-        if least_price > price_two:
-            least_price = price_two
-        box[j].reverse()
-    price_one = Big_box(box)
-    if least_price > price_one:
-        least_price = price_one
-    box[i].reverse()
-
-print(least_price)
-
-"""
-자료구조 수업의 3번째 과제이다. 작은 3개의 박스를 입력받고, 
-그 3개의 박스를 넣을 수 있는 큰 박스중에 가로^2+세로^2의 값이 가장 작은 것을 찾는 문제이다.
-"""
+print(Big_box(box))
